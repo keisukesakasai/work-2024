@@ -1,0 +1,48 @@
+services:
+
+  client-app:
+    build:
+      context: ./app/client
+      dockerfile: Dockerfile  
+    environment:
+      - LOG_LEVEL=info
+      - APP_VERSION=v1.0.0
+      - SERVICE_NAME=client-app
+      - OTEL_COLLECTOR_ADDRESS=otel-collector:4317
+      - SLEEP=5
+      - SERVER_ADDRESS=http://server-app:8080
+    develop:
+      watch:
+        - action: rebuild
+          path: app/client    
+
+  server-app:
+    build:
+      context: ./app/server
+      dockerfile: Dockerfile  
+    environment:
+      - LOG_LEVEL=info
+      - APP_VERSION=v1.0.0
+      - SERVICE_NAME=server-app
+      - OTEL_COLLECTOR_ADDRESS=otel-collector:4317
+    ports:
+      - "8080:8080"
+    develop:
+      watch:
+        - action: rebuild
+          path: app/server   
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.91.0
+    restart: always
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317" # OTLP gRPC receiver      
+
+  jaeger-all-in-one:
+    image: jaegertracing/all-in-one:latest
+    restart: always
+    ports:
+      - "16686:16686"

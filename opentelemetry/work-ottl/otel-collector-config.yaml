@@ -1,0 +1,34 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+
+exporters:
+  otlp:
+    endpoint: jaeger-all-in-one:4317
+    tls:
+      insecure: true
+
+  googlecloud:
+
+processors:
+  attributes:
+    actions:
+      - key: SECRET-1
+        action: delete
+      - key: SECRET-1
+        value: "****-****-****-****"
+        action: insert        
+
+  transform:
+    trace_statements:
+      - context: span
+        statements:
+          - set(attributes["SECRET-2"], "****-****-****-****") where attributes["SECRET-2"] != nil
+          
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [attributes, transform]
+      exporters: [otlp]
