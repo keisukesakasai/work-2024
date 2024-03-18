@@ -1,0 +1,5 @@
+/python-server/__pycache__/*
+/python-server/bin/*
+/python-server/lib/*
+/python-server/include/*
+/python-server/pyvenv.cfg

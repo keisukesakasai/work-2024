@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dsadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dsadmin
+  template:
+    metadata:
+      labels:
+        app: dsadmin
+    spec:
+      containers:
+      - name: dsadmin
+        image: "ghcr.io/remko/dsadmin:latest"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DATASTORE_PROJECT_ID
+          value: "my-datastore-project"
+        - name: DATASTORE_EMULATOR_HOST
+          value: "datastore:8081"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: dsadmin
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: dsadmin

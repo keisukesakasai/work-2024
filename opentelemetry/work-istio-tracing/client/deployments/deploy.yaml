@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: population-query
+  namespace: demo
+  labels:
+    app: population-query
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: population-query
+  template:
+    metadata:
+      labels:
+        app: population-query
+    spec:
+      containers:
+        - name: population-query
+          image: ghcr.io/keisukesakasai/work-2024/work-istio-tracing/client:latest
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+          env:  
+            - name: LOG_LEVEL
+              value: "info"
+            - name: APP_VERSION
+              value: "v1.0.0"
+            - name: SERVICE_NAME
+              value: "population-query"
+            - name: SLEEP
+              value: "5"
+            - name: SERVER_ADDRESS
+              value: "http://python-server.demo.svc.cluster.local:8080"
+            - name: DATASTORE_EMULATOR_HOST
+              value: datastore.datastore.svc.cluster.local:8081
+          resources:
+            limits:
+              cpu: 250m
+              memory: 250Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi                
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: population-query
+  namespace: demo
+spec:
+  selector:
+    app: population-query
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080              

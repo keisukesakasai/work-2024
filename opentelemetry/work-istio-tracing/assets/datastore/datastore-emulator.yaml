@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: datastore-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: datastore
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: datastore
+  template:
+    metadata:
+      labels:
+        app: datastore
+    spec:
+      containers:
+      - name: datastore
+        image: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+        command: ["gcloud", "--quiet", "beta", "emulators", "datastore", "start",
+                  "--host-port=0.0.0.0:8081", "--data-dir=/opt/datastore/data"]
+        volumeMounts:
+        - name: datastore-data
+          mountPath: /opt/datastore/data
+        ports:
+        - containerPort: 8081
+        env:
+        - name: CLOUDSDK_CORE_PROJECT
+          value: "my-datastore-project"
+      volumes:
+      - name: datastore-data
+        persistentVolumeClaim:
+          claimName: datastore-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: datastore
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8081
+    targetPort: 8081
+  selector:
+    app: datastore

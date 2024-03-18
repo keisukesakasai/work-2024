@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: query-fruit
+  namespace: demo
+  labels:
+    app: query-fruit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: query-fruit
+  template:
+    metadata:
+      labels:
+        app: query-fruit
+    spec:
+      containers:
+        - name: query-fruit
+          image: ghcr.io/keisukesakasai/work-2024/work-istio-tracing/server:latest
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+          env:  
+            - name: LOG_LEVEL
+              value: "info"
+            - name: APP_VERSION
+              value: "v1.0.0"
+            - name: SERVICE_NAME
+              value: "query-fruit"
+          resources:
+            limits:
+              cpu: 250m
+              memory: 250Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi                
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: query-fruit
+  namespace: demo
+spec:
+  selector:
+    app: query-fruit
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080              

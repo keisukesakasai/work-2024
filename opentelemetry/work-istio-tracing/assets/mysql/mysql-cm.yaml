@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS population;
+    USE population;
+    CREATE TABLE IF NOT EXISTS population (
+        prefecture_id INT AUTO_INCREMENT PRIMARY KEY,
+        prefecture VARCHAR(255),
+        population INT
+    );
+    INSERT INTO population (prefecture, population) VALUES
+    ('Hokkaido', 5210000),
+    ('Aomori-Ken', 1270000),
+    ('Iwate-Ken', 1250000),
+    ('Miyagi-Ken', 2320000),
+    ('Akita-Ken', 966000),
+    ('Yamagata-Ken', 1095000),
+    ('Fukushima-Ken', 1846000),
+    ('Ibaraki-Ken', 2860000),
+    ('Tochigi-Ken', 1940000),
+    ('Gunma-Ken', 1940000),
+    ('Saitama-Ken', 7190000),
+    ('Chiba-Ken', 6210000),
+    ('Tokyo-To', 13500000),
+    ('Kanagawa-Ken', 9040000),
+    ('Niigata-Ken', 2220000),
+    ('Toyama-Ken', 1044000),
+    ('Ishikawa-Ken', 1137000),
+    ('Fukui-Ken', 771000),
+    ('Yamanashi-Ken', 812000),
+    ('Nagano-Ken', 2050000),
+    ('Gifu-Ken', 2000000),
+    ('Shizuoka-Ken', 705000),
+    ('Aichi-Ken', 7553000),
+    ('Mie-Ken', 1800000),
+    ('Shiga-Ken', 1413000),
+    ('Kyoto-Fu', 2610000),
+    ('Osaka-Fu', 8830000),
+    ('Hyogo-Ken', 5530000),
+    ('Nara-Ken', 1364000),
+    ('Wakayama-Ken', 944000),
+    ('Tottori-Ken', 573000),
+    ('Shimane-Ken', 694000),
+    ('Okayama-Ken', 1909000),
+    ('Hiroshima-Ken', 2847000),
+    ('Yamaguchi-Ken', 1404000),
+    ('Tokushima-Ken', 755000),
+    ('Kagawa-Ken', 976000),
+    ('Ehime-Ken', 1385000),
+    ('Kochi-Ken', 728000),
+    ('Fukuoka-Ken', 5104000),
+    ('Saga-Ken', 832000),
+    ('Nagasaki-Ken', 1378000),
+    ('Kumamoto-Ken', 1786000),
+    ('Oita-Ken', 1166000),
+    ('Miyazaki-Ken', 1104000),
+    ('Kagoshima-Ken', 1648000),
+    ('Okinawa-Ken', 1434000);

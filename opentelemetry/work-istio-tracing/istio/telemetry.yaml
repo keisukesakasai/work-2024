@@ -1,0 +1,14 @@
+apiVersion: telemetry.istio.io/v1alpha1
+kind: Telemetry
+metadata:
+  name: mesh-default
+  namespace: demo
+spec:
+  tracing:
+  - providers:
+    - name: otel
+    randomSamplingPercentage: 100
+    customTags:
+      "Hatena Event":
+        literal:
+          value: "Casual OpenTelemetry !!!!"

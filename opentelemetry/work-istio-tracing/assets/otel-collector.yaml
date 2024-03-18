@@ -1,0 +1,31 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: sample
+  namespace: observability
+spec:
+  mode: deployment
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+
+    processors:
+      batch:    
+
+    exporters:
+      otlp:
+        endpoint: jaeger-collector:4317
+        tls:
+          insecure: true
+
+      debug:        
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [debug, otlp]
