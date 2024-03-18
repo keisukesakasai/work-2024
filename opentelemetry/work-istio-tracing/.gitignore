@@ -3,3 +3,9 @@
 /python-server/lib/*
 /python-server/include/*
 /python-server/pyvenv.cfg
+
+/python-server-autoinstrumented/__pycache__/*
+/python-server-autoinstrumented/bin/*
+/python-server-autoinstrumented/lib/*
+/python-server-autoinstrumented/include/*
+/python-server-autoinstrumented/pyvenv.cfg

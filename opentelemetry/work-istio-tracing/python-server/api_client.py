@@ -3,6 +3,7 @@ import requests
 from logger import setup_logger
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from opentelemetry.baggage.propagation import W3CBaggagePropagator
+from opentelemetry.propagators.b3 import B3MultiFormat
 
 logger = setup_logger()
 
@@ -15,6 +16,11 @@ def send_request_to_backend(ctx):
         headers = {}
         W3CBaggagePropagator().inject(headers, ctx)
         TraceContextTextMapPropagator().inject(headers, ctx)        
+        b3_format = B3MultiFormat()
+        b3_format.inject(headers, ctx)
+        
+        logger.info(f"送信時のヘッダー: {headers}")
+        
         response = requests.get(url, headers=headers, verify=False)
 
         return response.text

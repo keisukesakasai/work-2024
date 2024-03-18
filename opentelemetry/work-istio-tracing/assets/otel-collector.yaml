@@ -11,6 +11,8 @@ spec:
         protocols:
           grpc:
           http:
+      zipkin:
+        endpoint: 0.0.0.0:9411
 
     processors:
       batch:    
@@ -26,6 +28,6 @@ spec:
     service:
       pipelines:
         traces:
-          receivers: [otlp]
+          receivers: [zipkin, otlp]
           processors: [batch]
           exporters: [debug, otlp]

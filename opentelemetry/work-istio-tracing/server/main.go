@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 	"net/http"
 	logging "server/internal/log"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -27,6 +29,16 @@ func Handler(c *gin.Context) {
 func generateRandomWord(c *gin.Context) string {
 	ctx := c.Request.Context()
 	logger := logging.GetLoggerFromCtx(ctx)
+
+	// print Header
+	headersStr := ""
+	for key, values := range c.Request.Header {
+		for _, value := range values {
+			headersStr += fmt.Sprintf("%s: %s; ", key, value)
+		}
+	}
+	headersStr = strings.TrimRight(headersStr, "; ")
+	logger.Infof("Received headers @ Go Server(queryFruit): %s", headersStr)
 
 	words := []string{"apple", "banana", "cherry", "date", "elderberry"}
 

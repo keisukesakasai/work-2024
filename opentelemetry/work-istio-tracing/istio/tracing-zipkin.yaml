@@ -1,0 +1,10 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  meshConfig:
+    enableTracing: true
+    extensionProviders:
+    - name: zipkin
+      zipkin:
+        service: sample-collector.observability.svc.cluster.local
+        port: 9411
