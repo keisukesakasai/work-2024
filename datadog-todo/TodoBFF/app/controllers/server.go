@@ -10,10 +10,17 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+
+	gintrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gin-gonic/gin"
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
 func StartMainServer() {
 	log.Println("info: Start Server" + "port: " + serverPort)
+
+	// Datadog Tracer
+	tracer.Start()
+	defer tracer.Stop()
 
 	// コンテキスト生成
 	_, stop := signal.NotifyContext(context.Background(), os.Interrupt)
@@ -21,6 +28,7 @@ func StartMainServer() {
 
 	// router 設定
 	r := gin.New()
+	r.Use(gintrace.Middleware("TodoBFF"))
 
 	store := cookie.NewStore([]byte("secret"))
 	r.Use(sessions.Sessions("mysession", store))

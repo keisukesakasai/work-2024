@@ -4,6 +4,9 @@ metadata:
   name: todobff
   labels:
     app: todobff
+    tags.datadoghq.com/env: prod
+    tags.datadoghq.com/service: todobff
+    tags.datadoghq.com/version: v1.0.0
 spec:
   replicas: 1
   selector:
@@ -13,6 +16,10 @@ spec:
     metadata:
       labels:
         app: todobff
+        admission.datadoghq.com/enabled: "true"
+        tags.datadoghq.com/env: prod
+        tags.datadoghq.com/service: todobff
+        tags.datadoghq.com/version: v1.0.0
     spec:
       containers:
         - name: todobff
@@ -20,3 +27,32 @@ spec:
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
+          volumeMounts:
+            - name: apmsocketpath
+              mountPath: /var/run/datadog
+          env:
+            - name: DD_ENV
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/env']
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: DD_VERSION
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/version']
+            - name: DD_TRACE_PROPAGATION_STYLE
+              value: tracecontext,B3
+          resources:
+            limits:
+              cpu: 250m
+              memory: 250Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi                   
+      volumes:
+        - hostPath:
+            path: /var/run/datadog/
+          name: apmsocketpath

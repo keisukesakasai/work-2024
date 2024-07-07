@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 )
 
 func getSignup(c *gin.Context) {
@@ -33,11 +34,14 @@ func postSignup(c *gin.Context) {
 	"PassWord":"` + password + `"}`
 
 	Logger(c, "UserAPI /createUser にポスト")
-	rsp, err := http.Post(
+	cli := httptrace.WrapClient(http.DefaultClient)
+	req, _ := http.NewRequestWithContext(
+		c.Request.Context(),
+		http.MethodPost,
 		EpUserApi+"/createUser",
-		"application/json",
 		bytes.NewBuffer([]byte(jsonStr)),
 	)
+	rsp, err := cli.Do(req)
 	if err != nil {
 		log.Println(err)
 		return
@@ -70,11 +74,14 @@ func postLogin(c *gin.Context) {
 	jsonStr := `{"Email":"` + email + `"}`
 
 	Logger(c, "UserAPI /getUserByEmail にポスト")
-	rsp, err := http.Post(
+	cli := httptrace.WrapClient(http.DefaultClient)
+	req, _ := http.NewRequestWithContext(
+		c.Request.Context(),
+		http.MethodPost,
 		EpUserApi+"/getUserByEmail",
-		"application/json",
 		bytes.NewBuffer([]byte(jsonStr)),
 	)
+	rsp, err := cli.Do(req)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -93,11 +100,14 @@ func postLogin(c *gin.Context) {
 	jsonStr = `{"PassWord":"` + password + `"}`
 
 	Logger(c, "UserAPI /encrypt にポスト")
-	rsp, err = http.Post(
+	cli = httptrace.WrapClient(http.DefaultClient)
+	req, _ = http.NewRequestWithContext(
+		c.Request.Context(),
+		http.MethodPost,
 		EpUserApi+"/encrypt",
-		"application/json",
 		bytes.NewBuffer([]byte(jsonStr)),
 	)
+	rsp, err = cli.Do(req)
 	if err != nil {
 		fmt.Println(err)
 		return

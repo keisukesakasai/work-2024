@@ -4,12 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+
+	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 )
 
 func top(c *gin.Context) {
@@ -30,18 +33,21 @@ func getIndex(c *gin.Context) {
 	jsonStr1 := `{"Email":"` + email + `"}`
 
 	Logger(c, "UserAPI /getUserByEmail にポスト")
-	rsp1, err := http.Post(
+	cli := httptrace.WrapClient(http.DefaultClient)
+	req1, _ := http.NewRequestWithContext(
+		c.Request.Context(),
+		http.MethodPost,
 		EpUserApi+"/getUserByEmail",
-		"application/json",
 		bytes.NewBuffer([]byte(jsonStr1)),
 	)
+	rsp1, err := cli.Do(req1)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	defer rsp1.Body.Close()
 
-	byteArr, _ := ioutil.ReadAll(rsp1.Body)
+	byteArr, _ := io.ReadAll(rsp1.Body)
 	var responseGetUser ResponseGetUser
 	err = json.Unmarshal(byteArr, &responseGetUser)
 	if err != nil {
@@ -53,18 +59,21 @@ func getIndex(c *gin.Context) {
 	jsonStr2 := `{"user_id":"` + string(user_id) + `"}`
 
 	Logger(c, "TodoAPI /getTodosByEmail にポスト")
-	rsp2, err := http.Post(
+	cli = httptrace.WrapClient(http.DefaultClient)
+	req2, _ := http.NewRequestWithContext(
+		c.Request.Context(),
+		http.MethodPost,
 		EpTodoAPI+"/getTodosByUser",
-		"application/json",
 		bytes.NewBuffer([]byte(jsonStr2)),
 	)
+	rsp2, err := cli.Do(req2)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	defer rsp2.Body.Close()
 
-	byteArr, _ = ioutil.ReadAll(rsp2.Body)
+	byteArr, _ = io.ReadAll(rsp2.Body)
 	var getTodosByUserresponse getTodosByUserResponse
 	err = json.Unmarshal(byteArr, &getTodosByUserresponse)
 	if err != nil {
@@ -97,11 +106,14 @@ func postTodoSave(c *gin.Context) {
 	jsonStr1 := `{"Email":"` + email + `"}`
 
 	Logger(c, "UserAPI /getUserByEmail にポスト")
-	rsp1, err := http.Post(
+	cli := httptrace.WrapClient(http.DefaultClient)
+	req1, _ := http.NewRequestWithContext(
+		c.Request.Context(),
+		http.MethodPost,
 		EpUserApi+"/getUserByEmail",
-		"application/json",
 		bytes.NewBuffer([]byte(jsonStr1)),
 	)
+	rsp1, err := cli.Do(req1)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -123,11 +135,14 @@ func postTodoSave(c *gin.Context) {
 	jsonStr2 := `{"Content":"` + content + `",
 	"User_Id":"` + user_id + `"}`
 
-	rsp2, err := http.Post(
+	cli = httptrace.WrapClient(http.DefaultClient)
+	req2, _ := http.NewRequestWithContext(
+		c.Request.Context(),
+		http.MethodPost,
 		EpTodoAPI+"/createTodo",
-		"application/json",
 		bytes.NewBuffer([]byte(jsonStr2)),
 	)
+	rsp2, err := cli.Do(req2)
 	if err != nil {
 		log.Println(err)
 		return
@@ -159,11 +174,14 @@ func getTodoEdit(c *gin.Context, id int) {
 	jsonStr1 := `{"Email":"` + email + `"}`
 
 	Logger(c, "UserAPI /getUserByEmail にポスト")
-	rsp1, err := http.Post(
+	cli := httptrace.WrapClient(http.DefaultClient)
+	req1, _ := http.NewRequestWithContext(
+		c.Request.Context(),
+		http.MethodPost,
 		EpUserApi+"/getUserByEmail",
-		"application/json",
 		bytes.NewBuffer([]byte(jsonStr1)),
 	)
+	rsp1, err := cli.Do(req1)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -182,11 +200,14 @@ func getTodoEdit(c *gin.Context, id int) {
 	jsonStr2 := `{"todo_id":"` + todo_id + `"}`
 
 	Logger(c, "TodoAPI /getTodo にポスト")
-	rsp2, err := http.Post(
+	cli = httptrace.WrapClient(http.DefaultClient)
+	req2, _ := http.NewRequestWithContext(
+		c.Request.Context(),
+		http.MethodPost,
 		EpTodoAPI+"/getTodo",
-		"application/json",
 		bytes.NewBuffer([]byte(jsonStr2)),
 	)
+	rsp2, err := cli.Do(req2)
 	if err != nil {
 		log.Println(err)
 		return
@@ -218,11 +239,14 @@ func postTodoUpdate(c *gin.Context, id int) {
 	jsonStr1 := `{"Email":"` + email + `"}`
 
 	Logger(c, "UserAPI /getUserByEmail にポスト")
-	rsp1, err := http.Post(
+	cli := httptrace.WrapClient(http.DefaultClient)
+	req1, _ := http.NewRequestWithContext(
+		c.Request.Context(),
+		http.MethodPost,
 		EpUserApi+"/getUserByEmail",
-		"application/json",
 		bytes.NewBuffer([]byte(jsonStr1)),
 	)
+	rsp1, err := cli.Do(req1)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -245,11 +269,15 @@ func postTodoUpdate(c *gin.Context, id int) {
 	"Todo_Id":"` + todo_id + `"}`
 
 	Logger(c, "TodoAPI /updateTodo にポスト")
-	rsp2, err := http.Post(
+
+	cli = httptrace.WrapClient(http.DefaultClient)
+	req2, _ := http.NewRequestWithContext(
+		c.Request.Context(),
+		http.MethodPost,
 		EpTodoAPI+"/updateTodo",
-		"application/json",
 		bytes.NewBuffer([]byte(jsonStr2)),
 	)
+	rsp2, err := cli.Do(req2)
 	if err != nil {
 		log.Println(err)
 		return
@@ -275,11 +303,14 @@ func getTodoDelete(c *gin.Context, id int) {
 	jsonStr1 := `{"todo_id":"` + todo_id + `"}`
 
 	Logger(c, "TodoAPI /deleteTodo にポスト")
-	rsp1, err := http.Post(
+	cli := httptrace.WrapClient(http.DefaultClient)
+	req1, _ := http.NewRequestWithContext(
+		c.Request.Context(),
+		http.MethodPost,
 		EpTodoAPI+"/deleteTodo",
-		"application/json",
 		bytes.NewBuffer([]byte(jsonStr1)),
 	)
+	rsp1, err := cli.Do(req1)
 	if err != nil {
 		log.Println(err)
 		return
