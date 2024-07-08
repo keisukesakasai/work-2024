@@ -15,6 +15,7 @@ type Todo struct {
 	CreatedAt time.Time
 }
 
+// comment
 func CreateTodo(c *gin.Context, content string, user_id string) (err error) {
 	utils.Logger(c, "CRUD : CreateTodo")
 
