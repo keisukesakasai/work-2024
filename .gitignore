@@ -1,2 +1,4 @@
 # secret
 /datadog-todo/deployments/*
+
+/google-cloud/profiler-demo-app/secrets/*
