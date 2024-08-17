@@ -2,3 +2,5 @@
 /datadog-todo/deployments/*
 
 /google-cloud/profiler-demo-app/secrets/*
+
+/opentelemetry/gc-client-library/secrets/*

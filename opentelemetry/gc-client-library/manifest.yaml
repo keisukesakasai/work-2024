@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gc-client-otel
+  labels:
+    app.kubernetes.io/name: gc-client-otel
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gc-client-otel
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gc-client-otel
+    spec:
+      containers:
+      - image: ghcr.io/keisukesakasai/work-2024/opentelemetry/gc-client-library:latest
+        name: gc-client-otel
+        env:
+        - name: SERVICE_NAME
+          value: gc-client-otel
+        - name: OTEL_COLLECTOR_ENDPOINT
+          value: otelcol.observability.svc.cluster.local:4317
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /etc/gcp/key.json          
+        volumeMounts:
+        - name: for-trace
+          mountPath: /etc/gcp
+          readOnly: true
+      volumes:
+      - name: for-trace
+        secret:
+          secretName: for-trace          
