@@ -20,6 +20,8 @@ spec:
         tags.datadoghq.com/env: prod
         tags.datadoghq.com/service: userapi
         tags.datadoghq.com/version: v1.0.0        
+      annotations:
+        ad.datadoghq.com/userapi.logs: '[{"source":"userapi","service":"userapi","tags": ["env:prod"]}]'        
     spec:
       containers:
         - name: userapi

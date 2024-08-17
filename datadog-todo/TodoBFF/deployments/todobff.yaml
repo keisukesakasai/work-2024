@@ -20,6 +20,8 @@ spec:
         tags.datadoghq.com/env: prod
         tags.datadoghq.com/service: todobff
         tags.datadoghq.com/version: v1.0.0
+      annotations:
+        ad.datadoghq.com/todobff.logs: '[{"source":"todobff","service":"todobff","tags": ["env:prod"]}]'        
     spec:
       containers:
         - name: todobff

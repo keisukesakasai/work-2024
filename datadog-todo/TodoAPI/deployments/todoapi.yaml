@@ -19,7 +19,9 @@ spec:
         admission.datadoghq.com/enabled: "true"
         tags.datadoghq.com/env: prod
         tags.datadoghq.com/service: todoapi
-        tags.datadoghq.com/version: v1.0.0        
+        tags.datadoghq.com/version: v1.0.0   
+      annotations:
+        ad.datadoghq.com/todoapi.logs: '[{"source":"todoapi","service":"todoapi","tags": ["env:prod"]}]'
     spec:
       containers:
         - name: todoapi

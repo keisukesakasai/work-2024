@@ -25,6 +25,6 @@ func Logger(c *gin.Context, msg string) {
 		zap.String("user-agent", c.Request.UserAgent()),
 		zap.String("errors", c.Errors.ByType(gin.ErrorTypePrivate).String()),
 		zap.Duration("elapsed", time.Since(start)),
-		zap.String("message", msg),
+		zap.String("msg", msg),
 	)
 }
