@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-v1
+  labels:
+    app: app-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-v1
+  template:
+    metadata:
+      labels:
+        app: app-v1
+    spec:
+      containers:
+        - name: app-v1
+          image: ghcr.io/keisukesakasai/work-2024/google-cloud/profiler-demo-app:latest
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+          env:  
+            - name: NUM_RUNDOM_DATA
+              value: "1000000"
+            - name: APP_VERSION
+              value: "v1.0.0"  
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /etc/gcp/key.json                             
+          resources:
+            limits:
+              cpu: 250m
+              memory: 250Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi        
+          volumeMounts:                  # ボリュームマウントのセクションを追加
+            - name: config-volume
+              mountPath: /root/data  
+            - name: for-profile
+              mountPath: /etc/gcp
+              readOnly: true                                          
+      volumes:                          # volumes セクションを追加
+        - name: config-volume
+          configMap:
+            name: inputdata
+            items:
+            - key: input.txt
+              path: input.txt        
+        - name: for-profile
+          secret:
+            secretName: for-profile                      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service-v1
+spec:
+  selector:
+    app: app-v1
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
