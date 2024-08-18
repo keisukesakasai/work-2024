@@ -7,3 +7,7 @@
 
 # python
 /opentelemetry/work-otel-datadog-python/venv/*
+/datadog-otel-lambda/Python/bin/*
+/datadog-otel-lambda/Python/include/*
+/datadog-otel-lambda/Python/lib/*
+/datadog-otel-lambda/Python/bin/pyvenv.cfg
