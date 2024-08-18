@@ -1,9 +1,8 @@
 # secret
 /datadog-todo/deployments/*
-
 /google-cloud/profiler-demo-app/secrets/*
-
 /opentelemetry/gc-client-library/secrets/*
+/datadog-php-apm/.env
 
 # python
 /opentelemetry/work-otel-datadog-python/venv/*

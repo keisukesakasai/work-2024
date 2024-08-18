@@ -1,0 +1,56 @@
+services:
+  nginx:
+    image: nginx:1.25.0
+    ports:
+      - 8080:80
+    volumes:
+      - ./src:/var/www/html
+      - ./docker/nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      DD_ENV: "prod"
+      DD_SERVICE: "php-fpm"
+      DD_VERSION: "v1.0.0"
+      com.datadoghq.tags.env: "prod"
+      com.datadoghq.tags.service: "php-fpm"
+      com.datadoghq.tags.version: "v1.0.0"
+      DD_AGENT_HOST: "datadog-agent"
+      DD_TRACE_AGENT_PORT: "8126"
+    volumes:
+     - ./src:/var/www/html
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - 3306:3306
+  datadog-agent:
+    image: datadog/agent:latest
+    environment:
+      DD_API_KEY: ${DD_API_KEY}
+      DD_APM_ENABLED: true
+      DD_APM_NON_LOCAL_TRAFFIC: true
+      DD_SITE: "datadoghq.com"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+volumes:
+  mysqldata:
