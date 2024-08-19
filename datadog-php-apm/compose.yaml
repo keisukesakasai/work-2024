@@ -1,5 +1,7 @@
 services:
+
   nginx:
+    container_name: nginx
     image: nginx:1.25.0
     ports:
       - 8080:80
@@ -8,10 +10,14 @@ services:
       - ./docker/nginx:/etc/nginx/conf.d
     depends_on:
       - app
+
   app:
+    container_name: app
     build:
       context: ./docker/php
       dockerfile: Dockerfile
+    labels:
+      com.datadoghq.ad.logs: '[{"type":"file", "source": "php", "service": "php-fpm", "path": "/log/application-json.log"}]'
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -25,11 +31,15 @@ services:
       com.datadoghq.tags.version: "v1.0.0"
       DD_AGENT_HOST: "datadog-agent"
       DD_TRACE_AGENT_PORT: "8126"
+      DD_LOGS_INJECTION: "true"
     volumes:
-     - ./src:/var/www/html
+     - ./src:/var/www/html # app の /var/www/html を ./src にマウント
+     - ./log:/log
     depends_on:
       - mysql
+
   mysql:
+    container_name: mysql
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -39,18 +49,38 @@ services:
     volumes:
       - mysqldata:/var/lib/mysql
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 3306:3306
+
   datadog-agent:
-    image: datadog/agent:latest
+    container_name: datadog-agent
+    image: gcr.io/datadoghq/agent:latest  
     environment:
       DD_API_KEY: ${DD_API_KEY}
       DD_APM_ENABLED: true
       DD_APM_NON_LOCAL_TRAFFIC: true
-      DD_SITE: "datadoghq.com"
+      DD_LOGS_ENABLED: "true"
+      # DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL: "true"
+      # DD_CONTAINER_EXCLUDE_LOGS: "name:datadog-agent"
+      DD_SITE: "datadoghq.com"      
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - ./log/:/log:ro  # appの /var/www/html を /var/www/thml にマウント
+
+  k6:
+    container_name: k6
+    image: grafana/k6
+    volumes:
+      - ./docker/k6:/k6
+    entrypoint: [
+      "k6", "run", "--vus", "1", "--duration", "100m", "/k6/script.js"
+    ]
+    depends_on:
+      - app
+      - nginx
+
 volumes:
   mysqldata:
