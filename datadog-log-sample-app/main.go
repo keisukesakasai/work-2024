@@ -19,23 +19,22 @@ func main() {
 func Handler(c *gin.Context) {
 	logger := logging.NewLogger()
 
-	logger.Debugf("Reserved request.")
+	logger.Debug("Reserved request.")
 	randomWord := generateRandomWord(c)
 
 	c.String(http.StatusOK, randomWord)
 }
 
 func generateRandomWord(c *gin.Context) string {
-	ctx := c.Request.Context()
-	logger := logging.GetLoggerFromCtx(ctx)
+	logger := logging.NewLogger()
 
 	words := []string{"apple", "banana", "cherry", "coconut", "strawberry"}
 	seed := time.Now().UnixNano()
 	rand.New(rand.NewSource(seed))
 
 	word := words[rand.Intn(len(words))]
-	logger.Infof("Response is %s.", word)
+	logger.Info("Response is " + word)
 
-	logger.Errorf("Error detected !!")
+	logger.Error("Error detected !!")
 	return word
 }
