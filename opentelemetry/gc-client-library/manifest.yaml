@@ -32,3 +32,17 @@ spec:
       - name: for-trace
         secret:
           secretName: for-trace          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gc-client-otel
+  labels:
+    app.kubernetes.io/name: gc-client-otel
+spec:
+  selector:
+    app.kubernetes.io/name: gc-client-otel
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
