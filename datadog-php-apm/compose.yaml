@@ -34,7 +34,7 @@ services:
       DD_AGENT_HOST: "datadog-agent"
       DD_TRACE_AGENT_PORT: "8126"
       DD_LOGS_INJECTION: "true"
-      DD_TRACE_128_BIT_TRACEID_GENERATION_ENABLED: "false"
+      # DD_TRACE_128_BIT_TRACEID_GENERATION_ENABLED: "true"
     volumes:
      - ./src:/var/www/html # app の /var/www/html を ./src にマウント
      - ./log:/log
