@@ -38,11 +38,7 @@ function sendMessageToSqs($sqsClient, $queueUrl, $messageBody, $traceId, $parent
     $messageAttributes = [
         '_datadog' => [
             'DataType' => 'String',
-            'StringValue' => json_encode([
-                'x-datadog-trace-id' => $traceId,
-                'x-datadog-parent-id' => $parentId,
-                // 'x-datadog-sampling-priority' => '1',
-            ]),
+            'StringValue' => json_encode(\DDTrace\generate_distributed_tracing_headers()),
         ],
     ];
 
