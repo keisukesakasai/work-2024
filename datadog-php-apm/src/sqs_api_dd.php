@@ -34,7 +34,7 @@ function setupLogger() {
 /**
  * メッセージを SQS に送信する
  */
-function sendMessageToSqs($sqsClient, $queueUrl, $messageBody, $traceId, $parentId) {
+function sendMessageToSqs($sqsClient, $queueUrl, $messageBody) {
     $messageAttributes = [
         '_datadog' => [
             'DataType' => 'String',
@@ -65,12 +65,11 @@ try {
     $tracer = GlobalTracer::get();
     $scope = $tracer->startActiveSpan('SQS send message');
     $span = $scope->getSpan();
-    $traceContext = $span->getContext();
     
     $messageBody = json_encode(['message' => 'Hello from PHP!', 'timestamp' => time()]);
     echo 'Message Body: ' . $messageBody . PHP_EOL;
 
-    $messageId = sendMessageToSqs($sqsClient, $queueUrl, $messageBody, $traceContext->getTraceId(), $traceContext->getSpanId());
+    $messageId = sendMessageToSqs($sqsClient, $queueUrl, $messageBody);
 
     $span->finish();
 
