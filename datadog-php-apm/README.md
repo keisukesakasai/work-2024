@@ -12,6 +12,6 @@ $ docker compose -f compose.yaml up --build
 
 - API
   - `db.php`
-  ![](/img/db.png)
+  <img src="img/db.png" width=auto height="300">
   - `sqs_api_dd.php` ※ Require: SQS / Lambda
-  ![](/img/sqs.png)
+  <img src="img/sqs.png" width=auto height="300">
