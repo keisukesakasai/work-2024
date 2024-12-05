@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+  namespace: otelcol-k8s-distro-advent
+data:
+  otel-collector-config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+      k8s_cluster:
+        auth_type: serviceAccount
+      k8sobjects:
+        auth_type: serviceAccount
+
+    processors:
+      batch:
+      memory_limiter:
+        limit_mib: 400
+        spike_limit_mib: 100
+        check_interval: 5s
+
+    exporters:
+      otlp:
+        endpoint: oteltui.otelcol-k8s-distro-advent.svc.cluster.local:4317
+        tls:
+          insecure: true      
+
+    service:
+      pipelines:
+        metrics:
+          receivers: [otlp, k8s_cluster]
+          processors: [batch, memory_limiter]
+          exporters: [otlp]

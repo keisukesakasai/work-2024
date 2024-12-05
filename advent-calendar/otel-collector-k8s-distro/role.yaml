@@ -1,0 +1,44 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  namespace: otelcol-k8s-distro-advent
+  name: otel-collector-clusterrole
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - services
+      - namespaces
+      - resourcequotas
+      - nodes
+    verbs: ["list", "watch"]
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - replicasets
+      - statefulsets
+      - daemonsets
+    verbs: ["list", "watch"]
+  - apiGroups: ["batch"]
+    resources:
+      - jobs
+      - cronjobs
+    verbs: ["list", "watch"]
+  - apiGroups: ["autoscaling"]
+    resources:
+      - horizontalpodautoscalers
+    verbs: ["list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  namespace: otelcol-k8s-distro-advent
+  name: otel-collector-clusterrolebinding
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: otelcol-k8s-distro-advent
+roleRef:
+  kind: ClusterRole
+  name: otel-collector-clusterrole
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: advent-deployment
+  namespace: otelcol-k8s-distro-advent
+spec:
+  replicas: 2 # Pod の数
+  selector:
+    matchLabels:
+      app: advent-pod
+  template:
+    metadata:
+      labels:
+        app: advent-pod
+    spec:
+      containers:
+        - name: advent-container
+          image: nginx:latest # サンプルとして nginx を使用
+          ports:
+            - containerPort: 80

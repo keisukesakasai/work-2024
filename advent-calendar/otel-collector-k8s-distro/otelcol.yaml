@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector
+  namespace: otelcol-k8s-distro-advent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-collector
+  template:
+    metadata:
+      labels:
+        app: otel-collector
+    spec:
+      containers:
+        - name: otel-collector
+          image: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s:latest
+          args:
+            - "--config=/etc/otel-collector-config/otel-collector-config.yaml"
+          volumeMounts:
+            - name: otel-collector-config # ここが "volumes" と一致する必要あり
+              mountPath: /etc/otel-collector-config
+              readOnly: true
+      volumes:
+        - name: otel-collector-config # "volumeMounts" と一致させる
+          configMap:
+            name: otel-collector-config
